@@ -1,52 +1,93 @@
-create TABLE customers(
-   customer_id int PRIMARY KEY,
-    first_name varchar(20) NOT null,
-    last_name varchar(20) NOT null,
-    phone varchar(15),
-    email varchar(40) not null,
-    zip_code varchar(5) NOT null,
-    city varchar(10) 
-    check(city in('riyad','macca','madina'))
-  );
- CREATE TABLE orders(
-    order_id int PRIMARY key,
-    customer_id int,
-    order_status int not null,
-    required_date date,
-    shipped_date date,
-    store_id int not null,
-    staff_id int not null,
-    CONSTRAINT order_fk FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
-    );
-    create table stores(
-	store_id int PRIMARY key,
-    store_name varchar(10) NOT null,
-    phone varchar(25),
-    email varchar(30) not null,
-    street varchar(15) ,
-    city varchar(10),
-    state varchar(10),
+create database sales;
+
+CREATE TABLE customers(
+customer_id int PRIMARY KEY,
+    first_name varchar(40) NOT null,
+    last_name varchar(40) not null,
+    phone varchar(15) ,
+    email varchar(50) not null,
     zip_code varchar(5)
 );
-ALTER TABLE orders
-ADD CONSTRAINT store_orders_fk FOREIGN KEY(store_id) REFERENCES stores(store_id);
 
- create table staff(
-	staff_id int PRIMARY key,
-    first_name varchar(10) NOT null,
-    last_name varchar(10) not null,
-    email varchar(30) UNIQUE,    
-    phone varchar(25),
-    active int,
-    store_id int,
-    manager_id int
+CREATE TABLE stores(
+    store_id int primary key,
+    store_name varchar(40) not null,
+    phone varchar(15),
+    email varchar(40) not null,
+    zip_code varchar(5)
 );
-ALTER TABLE staffs
-ADD CONSTRAINT store_staff_fk FOREIGN KEY(store_id) REFERENCES stores(store_id);
+
+CREATE TABLE staffs(
+staff_id int PRIMARY key ,
+    first_name varchar(40) NOT null,
+    last_name varchar(40) not null,
+    email varchar(50) not null,
+    phone varchar(15) ,
+     store_id int,
+    CONSTRAINT FOREIGN KEY(store_id) REFERENCES stores(store_id)
+    
+);
+
+CREATE TABLE orders(
+order_id int PRIMARY KEY,
+    customer_id int,
+    order_date date,
+    shipped_date date,
+    store_id int,
+    staff_id int ,
+    CONSTRAINT FOREIGN key(customer_id) REFERENCES customers(customer_id),
+    CONSTRAINT FOREIGN key(store_id) REFERENCES stores(store_id),
+    CONSTRAINT FOREIGN key(staff_id) REFERENCES staffs(staff_id)
+);
+
+CREATE TABLE order_items (
+order_id int ,
+    item_id int,
+    quantity int ,
+    list_price decimal(10,2) not null,
+    PRIMARY KEY(order_id,item_id),
+      CONSTRAINT orders_items_fk
+	FOREIGN KEY (order_id) 
+        REFERENCES sales.orders (order_id) 
+);
+
+INSERT INTO customers(customer_id,first_name,last_name,phone,email,zip_code) VALUES(1,'lena','nagi', '012345','lena@gmail.com','100');
+INSERT INTO `customers` (`customer_id`, `first_name`, `last_name`, `phone`, `email`, `zip_code`) VALUES ('2', 'rawan', 'nagi', '88980', 'hdglj.gk', '88888');
+INSERT INTO `customers` (`customer_id`, `first_name`, `last_name`, `phone`, `email`, `zip_code`) VALUES ('3', 'rona', 'mustafa', NULL, 'udvfihfhh', NULL);
+INSERT INTO `customers` (`customer_id`, `first_name`, `last_name`, `phone`, `email`, `zip_code`) VALUES ('4', 'rehab', 'osman', '847083', 'rehab@gmail.com', NULL);
+INSERT INTO `customers` (`customer_id`, `first_name`, `last_name`, `phone`, `email`, `zip_code`) VALUES ('5', 'nagi', 'kamal', NULL, 'kamal_nagi@gmail.com', '676777');
+UPDATE `customers` SET `zip_code`='[7234]' WHERE customer_id=5;
+UPDATE `customers` SET `zip_code`='[45454]' WHERE customer_id=4;
+UPDATE `customers` SET `zip_code`='[3434]' WHERE customer_id=3;
+UPDATE `customers` SET `zip_code`='[21212]' WHERE customer_id=2;
+UPDATE `customers` SET `zip_code`='[12345]' WHERE customer_id=1;
+
+INSERT INTO `stores` (`store_id`, `store_name`, `phone`, `email`, `zip_code`)
+VALUES ('11', 'store1', '234567', 'rdjglkmpo/', NULL),
+('33', 'store2', '2345678', 'svtitsjydly', NULL),
+('44', 'store3', '7647354', 'store3@gmail.com', '24576'),
+('55', 'store3', '6780698', 'gjkhnpp', NULL),
+('22', 'store1', NULL, 'fgdjfghnkl', '');
+
+INSERT INTO `staffs` (`staff_id`, `first_name`, `last_name`, `email`, `phone`, `store_id`) VALUES ('111', 'a', 'b', 'efhjkhjyg', '2345678', '11');
+INSERT INTO `staffs` (`staff_id`, `first_name`, `last_name`, `email`, `phone`, `store_id`) VALUES ('222', 'x', 'y', 'xy@gmail.com', '56678', NULL);
+INSERT INTO `staffs` (`staff_id`, `first_name`, `last_name`, `email`, `phone`, `store_id`) VALUES ('333', 'c', 'd', 'cd@gmail.com', '234567', '55');
+INSERT INTO `staffs` (`staff_id`, `first_name`, `last_name`, `email`, `phone`, `store_id`) VALUES ('444', 'e', 'f', 'ef@yahoo.com', '689356973', '11');
+INSERT INTO `staffs` (`staff_id`, `first_name`, `last_name`, `email`, `phone`, `store_id`) VALUES ('555', 'g', 'h', 'jkgr;hkd', NULL, '33');
+
+INSERT INTO `orders` (`order_id`, `customer_id`, `order_date`, `shipped_date`, `store_id`, `staff_id`) VALUES ('1111', '1', '2022-05-11', '2022-05-20', '22', '111');
+INSERT INTO `orders` (`order_id`, `customer_id`, `order_date`, `shipped_date`, `store_id`, `staff_id`)
+VALUES ('2222', '2', '2022-05-02', '2022-05-11', '33', '333'),
+('3333', '4', NULL, NULL, '44', '444'),
+('4444', '5', '2022-05-20', '2022-05-25', '44', '333');
+INSERT INTO `orders` (`order_id`, `customer_id`, `order_date`, `shipped_date`, `store_id`, `staff_id`)
+VALUES ('5555', '1', NULL, '2022-05-31', '11', '555');
 
 
-ALTER TABLE customers
-ADD street varchar(30) not null;
+INSERT INTO `order_items` (`order_id`, `item_id`, `quantity`, `list_price`)
+VALUES ('5555', '11111', '7', '800'),
+('2222', '22222', '5', '900'), 
+('4444', '33333', '6', '1200'),
+('1111', '44444', NULL, '980'), 
+('2222', '55555', '9', '811');
 
-ALTER table customers
-MODIFY street varchar(35);
